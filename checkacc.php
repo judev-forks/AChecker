@@ -39,6 +39,7 @@ $web_service_id = trim($_REQUEST['id']);
 $guide = trim(strtolower($_REQUEST['guide']));
 $output = trim(strtolower($_REQUEST['output']));
 $offset = intval($_REQUEST['offset']);
+$offset_element_id = $_REQUEST['offset_element_id'];
 
 // initialize defaults for the ones not set or not set right but with default values
 if ($output <> 'html' && $output <> 'rest') 
@@ -111,7 +112,12 @@ $validate_content = @file_get_contents($uri);
 if (isset($validate_content))
 {
 	$aValidator = new AccessibilityValidator($validate_content, $gids, $uri);
-	$aValidator->setLineOffset($offset);
+	if ($offset_element_id) {
+		$aValidator->setOffsetElement($offset_element_id);
+	}
+	else {
+		$aValidator->setLineOffset($offset);
+	}
 	$aValidator->validate();
 	$errors = $aValidator->getValidationErrorRpt();
 

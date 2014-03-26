@@ -54,9 +54,10 @@ class AccessibilityValidator {
 	var $line_offset;                    // 1. ignore the problems on the lines before the line of $line_offset
 	                                     // 2. report line_number = real_line_number - $line_offset
 	                                     
+	var $offset_element_id;              // automatically set line_offset to the line matching this element id
+
 	var $col_offset;                     // The number of characters that are added internally at the first line to deal with the 
 	                                     // partial html. Fully private, cannot be set or get from outside
-	
 	/**
 	 * public
 	 * $content: string, html content to check
@@ -66,6 +67,7 @@ class AccessibilityValidator {
 	{
 		$this->validate_content = $content;
 		$this->guidelines = $guidelines;
+		$this->offset_element_id = '';
 		$this->line_offset = 0;
 		$this->col_offset = 0;
 		$this->uri = $uri;
@@ -465,6 +467,29 @@ class AccessibilityValidator {
 	private function finalize()
 	{
 		$this->num_of_errors = count($this->result);
+	}
+	
+	/**
+	 * public 
+	 * set offset element ID
+	 */
+	public function setOffsetElement($id)
+	{
+		$this->offset_element_id = $id;
+		if (preg_match('/id=[^\']?'.preg_quote($id).'\b/', $this->validate_content, $match, PREG_OFFSET_CAPTURE)) {
+			$offset = $match[0][1];
+			$lines = substr_count($this->validate_content, "\n", 0, $offset);
+			$this->setLineOffset($lines);
+		}
+	}
+	
+	/**
+	 * public 
+	 * return offset element ID
+	 */
+	public function getOffsetElement()
+	{
+		return $this->offset_element_id;
 	}
 	
 	/**
