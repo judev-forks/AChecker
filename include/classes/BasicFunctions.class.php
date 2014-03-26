@@ -896,6 +896,7 @@ class BasicFunctions {
 	public static function isNextTagNotIn($notInArray)
 	{
 		global $header_array, $global_e;
+		global $related_e;
 		
 		if (!is_array($header_array)) return true;
 		
@@ -911,8 +912,10 @@ class BasicFunctions {
 			}
 		}
 
-		if (isset($next_header) && !in_array($next_header->tag, $notInArray))
+		if (isset($next_header) && !in_array($next_header->tag, $notInArray)) {
+			$related_e = $next_header;
 			return false;
+		}
 		else
 			return true;
 	}

@@ -302,6 +302,7 @@ class AccessibilityValidator {
 	private function check($e, $check_id)
 	{
 		global $msg, $base_href, $tag_size;
+		global $related_e;
 		// don't check the lines before $line_offset
 		if ($e->linenumber <= $this->line_offset) return;
 
@@ -312,6 +313,7 @@ class AccessibilityValidator {
 		}
 		
 		$line_number = $e->linenumber-$this->line_offset;
+		$related_e = null;
 		
 		$result = $this->get_check_result($line_number, $col_number, $check_id);
 
@@ -353,6 +355,11 @@ class AccessibilityValidator {
 			
 			if ($result == FAIL_RESULT)
 			{
+				if (isset($related_e)) {
+					$e = $related_e;
+					$line_number = $e->linenumber-$this->line_offset;
+				}
+
 				$preview_html = $e->outertext;
 				if (strlen($preview_html) > DISPLAY_PREVIEW_HTML_LENGTH) 
 					$html_code = substr($preview_html, 0, DISPLAY_PREVIEW_HTML_LENGTH) . " ...";
